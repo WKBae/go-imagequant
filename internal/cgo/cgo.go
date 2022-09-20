@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /*
 #cgo CFLAGS: -DNDEBUG
+#cgo LDFLAGS: -lm
 
 #include <stdlib.h>
 #include "libimagequant.h"

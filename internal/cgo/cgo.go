@@ -30,7 +30,7 @@ static liq_image *cgo_liq_image_create_rgba_rows(const liq_attr *attr, void *buf
 		rows[i] = buffer + offsets[i];
 	}
 	liq_image *img = liq_image_create_rgba_rows(attr, rows, width, height, gamma);
-	free(rows);
+	liq_image_set_memory_ownership(img, LIQ_OWN_ROWS);
 	return img;
 }
 */
@@ -39,7 +39,6 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	"runtime"
 	"unsafe"
 )
 
@@ -93,7 +92,6 @@ func Quantize(img *image.NRGBA, minQuality, maxQuality, speed int, ditheringLeve
 	C.liq_result_destroy(liqResult)
 	C.liq_image_destroy(liqImage)
 	C.liq_attr_destroy(liqAttr)
-	runtime.KeepAlive(img)
 	return &image.Paletted{
 		Pix:     remapped,
 		Stride:  img.Rect.Dx(),

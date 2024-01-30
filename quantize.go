@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import (
+	"fmt"
 	"image"
 	"image/draw"
 
@@ -35,6 +36,9 @@ type Options struct {
 //go:generate sh ./copy_source.sh
 
 func Quantize(img image.Image, opts *Options) (*image.Paletted, error) {
+	if img == nil {
+		return nil, fmt.Errorf("image is nil")
+	}
 	if opts == nil {
 		opts = &Options{
 			MinQuality:     0,

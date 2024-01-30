@@ -43,7 +43,7 @@ import (
 	"unsafe"
 )
 
-func Quantize(img *image.RGBA, minQuality, maxQuality, speed int, ditheringLevel float32, gamma float64) (*image.Paletted, error) {
+func Quantize(img *image.NRGBA, minQuality, maxQuality, speed int, ditheringLevel float32, gamma float64) (*image.Paletted, error) {
 	var liqErr C.liq_error
 	liqAttr := C.liq_attr_create()
 	liqErr = C.liq_set_quality(liqAttr, C.int(minQuality), C.int(maxQuality))
@@ -83,7 +83,7 @@ func Quantize(img *image.RGBA, minQuality, maxQuality, speed int, ditheringLevel
 	liqPaletteLen := int(liqPalette.count)
 	palette := make(color.Palette, liqPaletteLen)
 	for i := 0; i < liqPaletteLen; i++ {
-		palette[i] = color.RGBA{
+		palette[i] = color.NRGBA{
 			R: byte(liqPalette.entries[i].r),
 			G: byte(liqPalette.entries[i].g),
 			B: byte(liqPalette.entries[i].b),

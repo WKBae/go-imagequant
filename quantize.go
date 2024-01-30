@@ -34,7 +34,7 @@ type Options struct {
 
 //go:generate sh ./copy_source.sh
 
-func QuantizeRGBA(img *image.RGBA, opts *Options) (*image.Paletted, error) {
+func Quantize(img image.Image, opts *Options) (*image.Paletted, error) {
 	if opts == nil {
 		opts = &Options{
 			MinQuality:     0,
@@ -44,15 +44,13 @@ func QuantizeRGBA(img *image.RGBA, opts *Options) (*image.Paletted, error) {
 			Gamma:          0,
 		}
 	}
-	return cgo.Quantize(img, opts.MinQuality, opts.MaxQuality, opts.Speed, opts.DitheringLevel, opts.Gamma)
-}
-
-func Quantize(img image.Image, opts *Options) (*image.Paletted, error) {
-	rgba, ok := img.(*image.RGBA)
-	if !ok {
+	var nrgba *image.NRGBA
+	if nimg, ok := img.(*image.NRGBA); ok {
+		nrgba = nimg
+	} else {
 		rect := image.Rect(0, 0, img.Bounds().Dx(), img.Bounds().Dy())
-		rgba = image.NewRGBA(rect)
-		draw.Draw(rgba, rect, img, img.Bounds().Min, draw.Src)
+		nrgba = image.NewNRGBA(rect)
+		draw.Draw(nrgba, rect, img, img.Bounds().Min, draw.Src)
 	}
-	return QuantizeRGBA(rgba, opts)
+	return cgo.Quantize(nrgba, opts.MinQuality, opts.MaxQuality, opts.Speed, opts.DitheringLevel, opts.Gamma)
 }
